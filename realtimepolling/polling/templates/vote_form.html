@@ -1,0 +1,8 @@
+
+
+<label for="choice">Vote:</label>
+<select name="choice" id="choice" required>
+  {% for choice in form.fields.choice.queryset %}
+    <option value="{{ choice.pk }}">{{ choice.choice_text }}</option>
+  {% endfor %}
+</select>
