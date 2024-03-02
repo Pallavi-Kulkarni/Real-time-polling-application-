@@ -19,7 +19,37 @@
 </div>
 {% endif %}
 <div id="votes-count">Total votes: <span id="total-votes">{{ total_votes }}</span></div>
+<div id="vote-results">
+  <h3>Results:</h3>
+  <ul>
+    {% for choice in poll.choice_set.all %}
+      <li>{{ choice.choice_text }} - {{ choice.votes }} votes</li>
+    {% endfor %}
+  </ul>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  function updatePollResults(){
+    $.get("{% url 'polling:poll_results_api' poll.id %}", function(data){
+      var resultsDiv = $('#vote-results');
+      resultsDiv.empty();
+      resultsDiv.append('<h3>Results:</h3>');
+      var resultsList = $('<ul>');
+      var totalVotesSpan = $('#total-votes');
+      totalVotesSpan.empty();
+      totalVotesSpan.append(data.total_votes)
+      data.results.forEach(function(choice){
+        resultsList.append('<li>'+choice.choice_text+'-'+choice.votes+' votes</li>');
+      });
+      resultsDiv.append(resultsList);
+    });
+  }
+
+  setInterval(updatePollResults, 5000);
+</script>
+
+<script>
+
   const disappearingMessages = document.querySelectorAll('.messages');
   console.log(disappearingMessages);
   disappearingMessages.forEach(message => {

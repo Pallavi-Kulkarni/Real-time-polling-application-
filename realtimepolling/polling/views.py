@@ -37,3 +37,10 @@ def detail(request, poll_id):
   return render(request,'detail.html', context)
 
 
+def poll_results_api(request, poll_id):
+  poll = get_object_or_404(Poll, pk=poll_id)
+  total_votes = poll.choice_set.aggregate(Sum('votes'))['votes__sum']
+  results = [{'choice_text':choice.choice_text, 'votes':choice.votes} for choice in poll.choice_set.all()]
+  return JsonResponse({'results':results, 'total_votes':total_votes})
+
+
